@@ -1,6 +1,5 @@
 import cv2
 import numpy as np
-import os
 
 def order_points(pts):
     """Упорядочиваем точки по порядку: top-left, top-right, bottom-right, bottom-left"""
@@ -15,17 +14,16 @@ def order_points(pts):
     
     return rect
 
-def crop_chessboard(image_path):
+def crop_chessboard(img):
     """
-    Загружает изображение, убирает шум, находит шахматную доску и возвращает путь к выровненному изображению.
+    Принимает изображение (numpy array), убирает шум, находит шахматную доску и возвращает выровненное изображение (numpy array).
     """
-    image = cv2.imread(image_path)
-    if image is None:
-        print(f"❌ Не удалось загрузить изображение: {image_path}")
+    if img is None:
+        print("❌ Передано пустое изображение")
         return None
 
     # 1. Шумоподавление
-    denoised = cv2.fastNlMeansDenoisingColored(image, None, 10, 10, 7, 21)
+    denoised = cv2.fastNlMeansDenoisingColored(img, None, 10, 10, 7, 21)
 
     # 2. Преобразование в серый и размытие
     gray = cv2.cvtColor(denoised, cv2.COLOR_BGR2GRAY)
@@ -75,9 +73,4 @@ def crop_chessboard(image_path):
     M = cv2.getPerspectiveTransform(rect, dst)
     warped = cv2.warpPerspective(denoised, M, (maxWidth, maxHeight))
 
-    # 7. Сохранение результата
-    output_path = os.path.join(os.path.dirname(image_path), "board_aligned.jpg")
-    cv2.imwrite(output_path, warped)
-    print(f"✅ Шахматная доска выровнена и сохранена: {output_path}")
-
-    return output_path
+    return warped
