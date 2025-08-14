@@ -3,5 +3,6 @@ opencv-python
 numpy
 gunicorn
 Pillow
-torch
-torchvision
+torch==2.8.0+cpu
+torchvision==0.23.0+cpu
+
